@@ -19,9 +19,7 @@ Future<void> main(List<String> args) async {
 class MyJsonToDartConfig extends JsonToDartConfig {
   @override
   bool get addMethod => true;
-}
 
-class MyJsonToDartController with JsonToDartControllerMixin {
   @override
   DartObject createDartObject({
     required String uid,
@@ -56,6 +54,8 @@ class MyJsonToDartController with JsonToDartControllerMixin {
     );
   }
 }
+
+class MyJsonToDartController with JsonToDartControllerMixin {}
 
 class MyDartObject extends DartObject {
   MyDartObject({
