@@ -19,6 +19,7 @@ class DartProperty extends Equatable {
     required bool nullable,
     required this.dartObject,
   }) {
+    init();
     key = keyValuePair.key;
     this.uid = '${uid}_${keyValuePair.key}';
     this.nullable = nullable;
@@ -28,6 +29,9 @@ class DartProperty extends Equatable {
     value = keyValuePair.value;
     jsonToDartController.allProperties.add(this);
   }
+
+  /// init before cotructor code
+  void init() {}
 
   final DartObject? dartObject;
   late String uid;
@@ -211,7 +215,6 @@ class DartProperty extends Equatable {
 
       // next is not array
       else {
-        // ignore: prefer_interpolation_to_compose_strings
         String item = 'item' + (count == 0 ? '' : count.toString());
         String addString = '';
         if (className != null) {

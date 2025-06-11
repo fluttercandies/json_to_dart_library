@@ -88,10 +88,10 @@ class DartObject extends DartProperty {
         objectKeys[item.key] = temp;
       } else {
         final DartObject temp = jsonToDartConfig.createDartObject(
-          uid: uid,
-          depth: depth,
-          keyValuePair: keyValuePair,
-          nullable: nullable,
+          uid: uid + '_' + item.key,
+          keyValuePair: MapEntry<String, dynamic>(item.key, item.value.data),
+          nullable: item.value.nullable,
+          depth: depth + 1,
           dartObject: this,
         );
         if (addProperty) {
