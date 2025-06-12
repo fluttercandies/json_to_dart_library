@@ -1,3 +1,8 @@
+import 'dart:collection';
+
+import 'package:json_to_dart_library/src/error_checker.dart';
+import 'package:json_to_dart_library/src/utils/custom_set.dart';
+
 import 'config.dart';
 import 'controller.dart';
 import 'dart_property.dart';
@@ -32,10 +37,17 @@ class DartObject extends DartProperty {
       upcaseCamelName(key),
       isClassName: true,
     );
+
+    // avoid duplicate class names
+    if (jsonToDartController.allObjects.any(
+      (DartObject element) => element.className == className,
+    )) {
+      className += uid;
+    }
+    jsonToDartController.allObjects.add(this);
     initializeProperties();
     updateNameByNamingConventionsType();
-
-    jsonToDartController.allObjects.add(this);
+    checkError(className);
   }
 
   Map<String, InnerObject>? jObject;
@@ -542,6 +554,13 @@ class DartObject extends DartProperty {
         key,
         uid,
       ];
+
+  SetBase<String> classError = CustomSet<String>();
+  bool get hasClassError => classError.isNotEmpty;
+
+  @override
+  List<DartErrorChecker> get errors =>
+      <DartErrorChecker>[...super.errors, DuplicateClassChecker(this)];
 }
 
 class InnerObject {

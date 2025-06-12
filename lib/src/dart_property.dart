@@ -1,7 +1,11 @@
+import 'dart:collection';
+
 import 'package:equatable/equatable.dart';
 import 'package:json_to_dart_library/src/controller.dart';
 
 import 'package:json_to_dart_library/src/dart_object.dart';
+import 'package:json_to_dart_library/src/error_checker.dart';
+import 'package:json_to_dart_library/src/utils/custom_set.dart';
 import 'package:json_to_dart_library/src/utils/enums.dart';
 
 import 'config.dart';
@@ -83,6 +87,7 @@ class DartProperty extends Equatable {
     }
 
     this.name = correctName(name, dartProperty: this);
+    checkError(name);
   }
 
   void updatePropertyAccessorType() {
@@ -265,5 +270,25 @@ class DartProperty extends Equatable {
   @override
   String toString() {
     return 'DartProperty($key, $value, $nullable)';
+  }
+
+  SetBase<String> propertyError = CustomSet<String>();
+  bool get hasPropertyError => propertyError.isNotEmpty;
+
+  late List<DartErrorChecker> errors = <DartErrorChecker>[
+    EmptyErrorChecker(this),
+    ValidityChecker(this),
+    DuplicatePropertyNameChecker(this),
+    PropertyAndClassNameSameChecker(this),
+  ];
+
+  void checkError(String input) {
+    if (!jsonToDartConfig.automaticCheck) {
+      errors.first.checkError(input);
+      return;
+    }
+    for (final DartErrorChecker error in errors) {
+      error.checkError(input);
+    }
   }
 }

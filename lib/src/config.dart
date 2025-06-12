@@ -74,6 +74,29 @@ abstract class JsonToDartConfig {
       dartObject: dartObject,
     );
   }
+
+  String propertyNameAssert(String uid) {
+    return "$uid: property name is empty";
+  }
+
+  String classNameAssert(String uid) {
+    return "$uid: class name is empty";
+  }
+
+  String get propertyCantSameAsClassName =>
+      'property can\'t the same as Class name';
+
+  String keywordCheckFailed(Object name) {
+    return '\'$name\' is a key word!';
+  }
+
+  String get propertyCantSameAsType => 'property can\'t the same as Type';
+
+  String get containsIllegalCharacters => 'contains illegal characters';
+
+  String get duplicateProperties => 'There are duplicate properties';
+
+  String get duplicateClasses => 'There are duplicate classes';
 }
 
 class _DefaultJsonToDartConfig extends JsonToDartConfig {}

@@ -11,6 +11,7 @@ dependencies:
   equatable: any
   dart_style: any
   intl: any
+  dartx: any
   compute: any
 dev_dependencies:
   lints: ^5.0.0

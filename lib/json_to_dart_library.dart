@@ -4,6 +4,7 @@ export 'src/controller.dart';
 export 'src/config.dart';
 export 'src/dart_object.dart';
 export 'src/dart_property.dart';
+export 'src/error_checker.dart';
 
 export 'src/utils/camel_under_score_converter.dart';
 export 'src/utils/dart_helper.dart';

@@ -183,8 +183,21 @@ mixin JsonToDartControllerMixin {
   void handleError(Object? e, StackTrace stack) {
     print('$e');
     print('$stack');
+    throw e as Exception; // rethrow the error for further handling if needed
+  }
 
-    // showAlertDialog(appLocalizations.formatErrorInfo, Icons.error);
+  List<String> getErrors() {
+    List<String> errors = <String>[];
+
+    for (var element in allObjects) {
+      errors.addAll(element.classError);
+      errors.addAll(element.propertyError);
+    }
+
+    for (var element in allProperties) {
+      errors.addAll(element.propertyError);
+    }
+    return errors;
   }
 }
 
