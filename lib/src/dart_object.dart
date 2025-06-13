@@ -420,29 +420,6 @@ class DartObject extends DartProperty {
             <String>[typeString, name, lowName]));
         fromJsonSb.writeLine(setString);
 
-        // String setNameTemp = setName;
-
-        // if (className != null) {
-        //   String toJson = '=> e.toJson()';
-        //   dynamic value = item.value;
-        //   String typeString = className;
-        //   while (value is List) {
-        //     toJson = '=> e.map(($typeString e) $toJson)';
-        //     typeString = 'List<$typeString>';
-        //     if (value.isNotEmpty) {
-        //       value = value.first;
-        //     } else {
-        //       break;
-        //     }
-        //   }
-        //   toJson = toJson.replaceFirst('=>', '');
-        //   toJson = toJson.replaceFirst('e', '');
-        //   toJson = toJson.trim();
-
-        //   final bool nonNullAble = ConfigSetting().nullsafety && !item.nullable;
-        //   setNameTemp += '${nonNullAble ? '' : '?'}$toJson';
-        // }
-
         toJsonSb.writeLine(stringFormat(DartHelper.toJsonSetString, <String>[
           item.key,
           setName,
@@ -495,8 +472,6 @@ class DartObject extends DartProperty {
             DartHelper.fromJsonFooter;
       }
 
-      //fromJsonSb.AppendLine(DartHelper.FromJsonFooter);
-
       toJsonSb.writeLine(DartHelper.toJsonFooter);
       sb.writeLine(factorySb.toString());
       sb.writeLine(fromJson);
@@ -532,8 +507,6 @@ class DartObject extends DartProperty {
             break;
         }
       }
-      // sb.writeLine(stringFormat(DartHelper.classToClone,
-      //     <String>[className, if (ConfigSetting().nullsafety) '!' else '']));
     }
 
     sb.writeLine(DartHelper.classFooter);

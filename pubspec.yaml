@@ -7,12 +7,12 @@ environment:
   sdk: ^3.6.2
 
 dependencies:
-  get_it: any
-  equatable: any
-  dart_style: any
-  intl: any
-  dartx: any
-  compute: any
+  get_it: ^8.0.3
+  equatable: ^2.0.7
+  dart_style: ^3.0.1
+  intl: ^0.20.2
+  dartx: ^1.2.0
+  compute: ^1.0.2
 dev_dependencies:
   lints: ^5.0.0
 # For information on the generic Dart part of this file, see the

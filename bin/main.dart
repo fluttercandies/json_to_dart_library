@@ -4,7 +4,7 @@ import 'package:json_to_dart_library/json_to_dart_library.dart';
 
 Future<void> main(List<String> args) async {
   DartObject? dartObject = await jsonToDartController.jsonToDartObject(
-    json: '''{"d":1}''',
+    json: '''{"data":[{"a":1}],"msg":"s","code":0}''',
   );
   var errors = jsonToDartController.getErrors();
   if (errors.isNotEmpty) {

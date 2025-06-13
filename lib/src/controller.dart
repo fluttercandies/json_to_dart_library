@@ -12,12 +12,18 @@ import 'package:json_to_dart_library/src/utils/string_buffer.dart';
 
 import 'config.dart';
 
+/// Provides core functionality to convert JSON to Dart classes.
 mixin JsonToDartControllerMixin {
+  // Stores all parsed DartProperty instances
   Set<DartProperty> allProperties = <DartProperty>{};
+
+  // Stores all DartObject instances created during parsing
   Set<DartObject> allObjects = <DartObject>{};
+
+  // Keeps track of already printed objects to avoid duplicates
   Set<DartObject> printedObjects = <DartObject>{};
 
-  /// convert json string to DartObject
+  /// Converts a JSON string into a DartObject representation.
   Future<DartObject?> jsonToDartObject({
     required String json,
     String rootObjectName = 'Root',
@@ -30,25 +36,20 @@ mixin JsonToDartControllerMixin {
 
     String inputText = json;
     try {
-      // if (kIsWeb) {
-      //   // fix https://github.com/dart-lang/sdk/issues/34105
-      //   inputText = json.replaceAll('.0', '.1');
-      // }
-
+      // Decode JSON in a separate isolate using compute
       final dynamic jsonData =
           await compute<String, dynamic>(jsonDecode, inputText)
               .onError((Object? error, StackTrace stackTrace) {
         handleError(error, stackTrace);
       });
 
+      // Convert the dynamic JSON into DartObject
       final DartObject? extendedObject =
           dynamicToDartObject(jsonData, rootObjectName: rootObjectName);
 
-      if (extendedObject == null) {
-        return null;
-      }
-
-      if (jsonToDartConfig.nullsafety &&
+      // Handle null safety and nullability based on config
+      if (extendedObject != null &&
+          jsonToDartConfig.nullsafety &&
           jsonToDartConfig.nullable &&
           !jsonToDartConfig.smartNullable) {
         extendedObject.updateNullable(true);
@@ -61,12 +62,14 @@ mixin JsonToDartControllerMixin {
     return null;
   }
 
+  /// Converts a dynamic JSON structure to a DartObject
   DartObject? dynamicToDartObject(
     dynamic jsonData, {
     String rootObjectName = 'Root',
   }) {
     DartObject? extendedObject;
 
+    // Handle JSON object
     if (jsonData is Map) {
       extendedObject = jsonToDartConfig.createDartObject(
         depth: 0,
@@ -75,7 +78,9 @@ mixin JsonToDartControllerMixin {
         nullable: false,
         uid: rootObjectName,
       );
-    } else if (jsonData is List) {
+    }
+    // Handle JSON array
+    else if (jsonData is List) {
       final Map<String, List<dynamic>> root = <String, List<dynamic>>{
         rootObjectName: jsonData
       };
@@ -86,21 +91,24 @@ mixin JsonToDartControllerMixin {
             nullable: false,
             uid: rootObjectName,
           )
-          .objectKeys[rootObjectName]!
-        ..decDepth();
+          .objectKeys[rootObjectName]! // Access the object
+        ..decDepth(); // Decrease depth level for correct nesting
     }
     return extendedObject;
   }
 
+  /// Generates Dart class code from a DartObject
   String? generateDartCode(DartObject? dartObject) {
     printedObjects.clear();
 
     if (dartObject != null) {
       final CustomStringBuffer sb = CustomStringBuffer();
       try {
+        // Insert file header info if provided
         if (jsonToDartConfig.fileHeaderInfo.isNotEmpty) {
           String info = jsonToDartConfig.fileHeaderInfo;
-          //[Date MM-dd HH:mm]
+
+          // Handle [Date xxx] placeholder replacement with actual date
           try {
             int start = info.indexOf('[Date');
             final int startIndex = start;
@@ -121,14 +129,16 @@ mixin JsonToDartControllerMixin {
               }
             }
           } catch (e) {
-            // showAlertDialog(appLocalizations.timeFormatError, Icons.error);
+            // Ignore date format errors
           }
 
           sb.writeLine(info);
         }
 
+        // Import JSON utilities
         sb.writeLine(DartHelper.jsonImport);
 
+        // Append JSON parsing helpers if addMethod is enabled
         if (jsonToDartConfig.addMethod) {
           if (jsonToDartConfig.enableArrayProtection) {
             sb.writeLine('import \'dart:developer\';');
@@ -146,7 +156,10 @@ mixin JsonToDartControllerMixin {
                   : DartHelper.asTMethod);
         }
 
+        // Append Dart class definitions
         sb.writeLine(dartObject.toString());
+
+        // Format code using Dart formatter
         String result = sb.toString();
         DartFormatter? formatter = jsonToDartConfig.formatter;
         if (formatter != null) {
@@ -162,12 +175,14 @@ mixin JsonToDartControllerMixin {
     return null;
   }
 
+  /// Handles and prints errors, then rethrows them
   void handleError(Object? e, StackTrace stack) {
     print('$e');
     print('$stack');
-    throw e as Exception; // rethrow the error for further handling if needed
+    throw e as Exception;
   }
 
+  /// Collects and returns a list of error messages from all objects and properties
   List<String> getErrors() {
     List<String> errors = <String>[];
 
@@ -179,18 +194,22 @@ mixin JsonToDartControllerMixin {
     for (var element in allProperties) {
       errors.addAll(element.propertyError);
     }
+
     return errors;
   }
 }
 
+// Default controller instance using the mixin
 class _JsonToDartController with JsonToDartControllerMixin {}
 
-_JsonToDartController _jsonToDartController = _JsonToDartController();
+final _JsonToDartController _jsonToDartController = _JsonToDartController();
 
+/// Register a custom controller instance for use via GetIt
 void registerController(JsonToDartControllerMixin controller) {
   GetIt.instance.registerSingleton<JsonToDartControllerMixin>(controller);
 }
 
+/// Retrieve the active controller (either registered or default)
 JsonToDartControllerMixin get jsonToDartController =>
     GetIt.instance.isRegistered<JsonToDartControllerMixin>()
         ? GetIt.instance.get<JsonToDartControllerMixin>()
