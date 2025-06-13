@@ -1,3 +1,5 @@
+// ignore_for_file: constant_identifier_names
+
 enum DartType {
   String,
   int,
@@ -8,46 +10,29 @@ enum DartType {
 }
 
 enum PropertyAccessorType {
-  /// <summary>
   /// default
-  /// </summary>
   none,
 
-  /// <summary>
   /// final readonly
-  /// </summary>
+
   final_,
-
-  /// <summary>
-  /// readonly
-  /// </summary>
-  //get_,
-
-  /// <summary>
-  /// get and set
-  /// </summary>
-  //getSet,
 }
 
 enum PropertyNamingConventionsType {
-  /// <summary>
   /// default
-  /// </summary>
+
   none,
 
-  /// <summary>
   /// camelCase
-  /// </summary>
+
   camelCase,
 
-  /// <summary>
   /// pascal
-  /// </summary>
+
   pascal,
 
-  /// <summary>
   /// hungarianNotation
-  /// </summary>
+
   hungarianNotation
 }
 

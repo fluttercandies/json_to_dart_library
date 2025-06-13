@@ -20,13 +20,12 @@ class DartProperty extends Equatable {
     required String uid,
     required this.depth,
     required this.keyValuePair,
-    required bool nullable,
+    required this.nullable,
     required this.dartObject,
   }) {
     init();
     key = keyValuePair.key;
     this.uid = '${uid}_${keyValuePair.key}';
-    this.nullable = nullable;
     propertyAccessorType = jsonToDartConfig.propertyAccessorType;
     type = DartHelper.converDartType(keyValuePair.value.runtimeType);
     name = keyValuePair.key;
@@ -43,31 +42,14 @@ class DartProperty extends Equatable {
   late final String key;
   late final dynamic value;
   final MapEntry<String, dynamic> keyValuePair;
-  String _name = '';
-  String get name => _name;
-  set name(String value) {
-    _name = value;
-  }
 
-  PropertyAccessorType _propertyAccessorType = PropertyAccessorType.none;
-  PropertyAccessorType get propertyAccessorType => _propertyAccessorType;
+  String name = '';
 
-  set propertyAccessorType(PropertyAccessorType value) {
-    _propertyAccessorType = value;
-  }
+  PropertyAccessorType propertyAccessorType = PropertyAccessorType.none;
 
-  bool _nullable = false;
-  bool get nullable => _nullable;
-  set nullable(bool value) {
-    _nullable = value;
-  }
+  bool nullable = false;
 
-  DartType _type = DartType.Object;
-  DartType get type => _type;
-
-  set type(DartType value) {
-    _type = value;
-  }
+  DartType type = DartType.Object;
 
   void updateNameByNamingConventionsType() {
     String name = this.name;
@@ -220,7 +202,7 @@ class DartProperty extends Equatable {
 
       // next is not array
       else {
-        String item = 'item' + (count == 0 ? '' : count.toString());
+        String item = 'item${count == 0 ? '' : count.toString()}';
         String addString = '';
         if (className != null) {
           item =

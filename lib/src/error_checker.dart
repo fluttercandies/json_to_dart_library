@@ -25,7 +25,7 @@ abstract class DartErrorChecker {
 }
 
 class EmptyErrorChecker extends DartErrorChecker {
-  EmptyErrorChecker(DartProperty property) : super(property);
+  EmptyErrorChecker(super.property);
 
   @override
   void checkError(String input) {
@@ -52,7 +52,7 @@ class EmptyErrorChecker extends DartErrorChecker {
 }
 
 class ValidityChecker extends DartErrorChecker {
-  ValidityChecker(DartProperty property) : super(property);
+  ValidityChecker(super.property);
 
   @override
   void checkError(String input) {
@@ -106,13 +106,13 @@ class ValidityChecker extends DartErrorChecker {
 
     out.removeWhere((String element) => element.startsWith('vcf: '));
     if (errorInfo != null) {
-      out.add('vcf: ' + errorInfo);
+      out.add('vcf: $errorInfo');
     }
   }
 }
 
 class DuplicateClassChecker extends DartErrorChecker {
-  DuplicateClassChecker(DartObject property) : super(property);
+  DuplicateClassChecker(DartObject super.property);
 
   DartObject get dartObject => property as DartObject;
 
@@ -140,7 +140,7 @@ class DuplicateClassChecker extends DartErrorChecker {
 }
 
 class DuplicatePropertyNameChecker extends DartErrorChecker {
-  DuplicatePropertyNameChecker(DartProperty property) : super(property);
+  DuplicatePropertyNameChecker(super.property);
   @override
   void checkError(String input) {
     if (property.dartObject == null || input != property.name) {
@@ -166,7 +166,7 @@ class DuplicatePropertyNameChecker extends DartErrorChecker {
 }
 
 class PropertyAndClassNameSameChecker extends DartErrorChecker {
-  PropertyAndClassNameSameChecker(DartProperty property) : super(property);
+  PropertyAndClassNameSameChecker(super.property);
   @override
   void checkError(String input) {
     final String errorInfo = jsonToDartConfig.propertyCantSameAsClassName;

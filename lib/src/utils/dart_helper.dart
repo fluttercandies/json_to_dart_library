@@ -175,13 +175,13 @@ T asT<T>(dynamic value, [T defaultValue]) {
   try {
     if (value != null) {
       final String valueS = value.toString();
-      if ('' is T) {
+      if (String == T) {
         return valueS as T;
-      } else if (0 is T) {
+      } else if (int == T) {
         return int.parse(valueS) as T;
-      } else if (0.0 is T) {
+      } else if (double == T) {
         return double.parse(valueS) as T;
-      } else if (false is T) {
+      } else if (bool == T) {
         if (valueS == '0' || valueS == '1') {
           return (valueS == '1') as T;
         }
@@ -219,13 +219,13 @@ T? asT<T extends Object?>(dynamic value, [T? defaultValue]) {
   try {
     if (value != null) {
       final String valueS = value.toString();
-      if ('' is T) {
+      if (String == T) {
         return valueS as T;
-      } else if (0 is T) {
+      } else if (int == T) {
         return int.parse(valueS) as T;
-      } else if (0.0 is T) {
+      } else if (double == T) {
         return double.parse(valueS) as T;
-      } else if (false is T) {
+      } else if (bool == T) {
         if (valueS == '0' || valueS == '1') {
           return (valueS == '1') as T;
         }

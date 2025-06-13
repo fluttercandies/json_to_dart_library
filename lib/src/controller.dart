@@ -1,5 +1,7 @@
 import 'dart:convert';
 import 'package:compute/compute.dart';
+import 'package:dart_style/dart_style.dart';
+
 import 'package:get_it/get_it.dart';
 import 'package:intl/intl.dart';
 import 'package:json_to_dart_library/src/dart_object.dart';
@@ -94,25 +96,6 @@ mixin JsonToDartControllerMixin {
     printedObjects.clear();
 
     if (dartObject != null) {
-      // final DartObject? errorObject = allObjects.firstOrNullWhere(
-      //     (DartObject element) =>
-      //         element.classError.isNotEmpty ||
-      //         element.propertyError.isNotEmpty);
-      // if (errorObject != null) {
-      //   showAlertDialog(errorObject.classError.join('\n') +
-      //       '\n' +
-      //       errorObject.propertyError.join('\n'));
-      //   return null;
-      // }
-
-      // final DartProperty? errorProperty = allProperties.firstOrNullWhere(
-      //     (DartProperty element) => element.propertyError.isNotEmpty);
-
-      // if (errorProperty != null) {
-      //   showAlertDialog(errorProperty.propertyError.join('\n'));
-      //   return null;
-      // }
-
       final CustomStringBuffer sb = CustomStringBuffer();
       try {
         if (jsonToDartConfig.fileHeaderInfo.isNotEmpty) {
@@ -165,11 +148,10 @@ mixin JsonToDartControllerMixin {
 
         sb.writeLine(dartObject.toString());
         String result = sb.toString();
-
-        result = jsonToDartConfig.formatter.format(result);
-
-        // _textEditingController.text = result;
-        // Clipboard.setData(ClipboardData(text: result));
+        DartFormatter? formatter = jsonToDartConfig.formatter;
+        if (formatter != null) {
+          result = formatter.format(result);
+        }
 
         return result;
       } catch (e, stack) {

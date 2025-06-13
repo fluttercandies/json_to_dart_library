@@ -24,7 +24,7 @@ class DartObject extends DartProperty {
   }) {
     properties = <DartProperty>[];
     objectKeys = <String, DartObject>{};
-    jObject = (this.keyValuePair.value as Map<String, dynamic>).map(
+    jObject = (keyValuePair.value as Map<String, dynamic>).map(
         (String key, dynamic value) => MapEntry<String, InnerObject>(
             key,
             InnerObject(
@@ -32,7 +32,7 @@ class DartObject extends DartProperty {
                 type: DartHelper.converDartType(value.runtimeType),
                 nullable: DartHelper.converNullable(value))));
 
-    final String key = this.keyValuePair.key;
+    final String key = keyValuePair.key;
     className = correctName(
       upcaseCamelName(key),
       isClassName: true,
@@ -56,11 +56,7 @@ class DartObject extends DartProperty {
   Map<String, InnerObject>? get outPutObject =>
       mergeObject != null ? mergeObject! : jObject;
 
-  String _className = '';
-  String get className => _className;
-  set className(String value) {
-    _className = value;
-  }
+  String className = '';
 
   late List<DartProperty> properties;
 
@@ -100,7 +96,7 @@ class DartObject extends DartProperty {
         objectKeys[item.key] = temp;
       } else {
         final DartObject temp = jsonToDartConfig.createDartObject(
-          uid: uid + '_' + item.key,
+          uid: '${uid}_${item.key}',
           keyValuePair: MapEntry<String, dynamic>(item.key, item.value.data),
           nullable: item.value.nullable,
           depth: depth + 1,
@@ -468,7 +464,7 @@ class DartObject extends DartProperty {
           equalityStringSb1.add('${item.name} == other.${item.name}');
         } else if (jsonToDartConfig.equalityMethodType ==
             EqualityMethodType.equatable) {
-          equalityStringSb.add('${item.name}');
+          equalityStringSb.add(item.name);
         }
       }
 

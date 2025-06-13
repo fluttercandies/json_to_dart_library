@@ -1,7 +1,6 @@
 import 'package:dart_style/dart_style.dart';
 import 'package:get_it/get_it.dart';
 import 'package:json_to_dart_library/json_to_dart_library.dart';
-import 'package:json_to_dart_library/src/utils/enums.dart';
 
 abstract class JsonToDartConfig {
   /// whether to add a method to convert the object to JSON
@@ -39,7 +38,7 @@ abstract class JsonToDartConfig {
 
   bool get deepCopy => false;
 
-  DartFormatter get formatter => DartFormatter(
+  DartFormatter? get formatter => DartFormatter(
         languageVersion: DartFormatter.latestLanguageVersion,
       );
 
