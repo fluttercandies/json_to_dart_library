@@ -1,39 +1,33 @@
-<!--
-This README describes the package. If you publish this package to pub.dev,
-this README's contents appear on the landing page for your package.
+## The library to convert json to dart code
 
-For information about how to write a good package README, see the guide for
-[writing package pages](https://dart.dev/tools/pub/writing-package-pages).
 
-For general information about developing packages, see the Dart guide for
-[creating packages](https://dart.dev/guides/libraries/create-packages)
-and the Flutter guide for
-[developing packages and plugins](https://flutter.dev/to/develop-packages).
--->
-
-TODO: Put a short description of the package here that helps potential users
-know whether this package might be useful for them.
-
-## Features
-
-TODO: List what your package can do. Maybe include images, gifs, or videos.
-
-## Getting started
-
-TODO: List prerequisites and provide or point to information on how to
-start using the package.
-
-## Usage
-
-TODO: Include short and useful examples for package users. Add longer examples
-to `/example` folder.
+## simple used
 
 ```dart
-const like = 'sample';
+Future<void> main(List<String> args) async {
+  DartObject? dartObject = await jsonToDartController.jsonToDartObject(
+    json: '''{"data":[{"a":1}],"msg":"s","code":0}''',
+  );
+  var errors = jsonToDartController.getErrors();
+  if (errors.isNotEmpty) {
+    print('Errors found:');
+    for (var error in errors) {
+      print(error);
+    }
+    return;
+  }
+
+  if (dartObject != null) {
+    var dartCode = jsonToDartController.generateDartCode(dartObject);
+    File('output.dart').writeAsStringSync(dartCode!);
+    print('Dart code generated successfully:');
+  }
+}
+
 ```
+ 
+## custom
 
-## Additional information
+you can define the config and DartObject/DartProperty to generate your own dart style code.
 
-TODO: Tell users more about the package: where to find more information, how to
-contribute to the package, how to file issues, what response they can expect
-from the package authors, and more.
+you can see bin/custom.dart to see more info.
