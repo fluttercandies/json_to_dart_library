@@ -39,11 +39,12 @@ class DartObject extends DartProperty {
     );
 
     // avoid duplicate class names
-    if (jsonToDartController.allObjects.any(
-      (DartObject element) => element.className == className,
-    )) {
-      className += uid;
-    }
+    // if (jsonToDartController.allObjects.any(
+    //   (DartObject element) => element.className == className,
+    // )) {
+    //   className += uid;
+    // }
+
     jsonToDartController.allObjects.add(this);
     initializeProperties();
     updateNameByNamingConventionsType();
@@ -502,7 +503,7 @@ class DartObject extends DartProperty {
           case EqualityMethodType.equatable:
             sb.writeLine(
                 stringFormat(DartHelper.equatableEqualityString, <String>[
-              equalityStringSb.join(','),
+              '${equalityStringSb.join(',')},',
             ]));
             break;
         }
