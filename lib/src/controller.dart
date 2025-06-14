@@ -105,6 +105,11 @@ mixin JsonToDartControllerMixin {
       final CustomStringBuffer sb = CustomStringBuffer();
       try {
         // Insert file header info if provided
+        if (!jsonToDartConfig.fileHeaderInfo.contains('dart:convert')) {
+          // Import JSON utilities
+          sb.writeLine(DartHelper.jsonImport);
+        }
+
         if (jsonToDartConfig.fileHeaderInfo.isNotEmpty) {
           String info = jsonToDartConfig.fileHeaderInfo;
 
@@ -134,9 +139,6 @@ mixin JsonToDartControllerMixin {
 
           sb.writeLine(info);
         }
-
-        // Import JSON utilities
-        sb.writeLine(DartHelper.jsonImport);
 
         // Append JSON parsing helpers if addMethod is enabled
         if (jsonToDartConfig.addMethod) {
