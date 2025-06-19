@@ -175,13 +175,13 @@ T asT<T>(dynamic value, [T defaultValue]) {
   try {
     if (value != null) {
       final String valueS = value.toString();
-      if (String == T) {
+      if (String == T || '' is T)  {
         return valueS as T;
-      } else if (int == T) {
+      } else if (int == T || 0 is T) {
         return int.parse(valueS) as T;
-      } else if (double == T) {
+      } else if (double == T || 0.0 is T) {
         return double.parse(valueS) as T;
-      } else if (bool == T) {
+      } else if (bool == T || false is T) {
         if (valueS == '0' || valueS == '1') {
           return (valueS == '1') as T;
         }
@@ -219,13 +219,13 @@ T? asT<T extends Object?>(dynamic value, [T? defaultValue]) {
   try {
     if (value != null) {
       final String valueS = value.toString();
-      if (String == T) {
+      if (String == T || '' is T) {
         return valueS as T;
-      } else if (int == T) {
+      } else if (int == T || 0 is T) {
         return int.parse(valueS) as T;
-      } else if (double == T) {
+      } else if (double == T || 0.0 is T) {
         return double.parse(valueS) as T;
-      } else if (bool == T) {
+      } else if (bool == T || false is T) {
         if (valueS == '0' || valueS == '1') {
           return (valueS == '1') as T;
         }
@@ -244,8 +244,15 @@ T? asT<T extends Object?>(dynamic value, [T? defaultValue]) {
  ''';
 
   static String getUseAsT(String? par1, String par2) {
+    var nullable = par1 != null && par1.contains('?');
+    if (jsonToDartConfig.nullsafety && nullable) {
+      // asT<T?> => T?
+      // don't need to add ? if nullable is true
+      // asT<T> => T?
+      par1 = par1.replaceFirst('?', '');
+    }
     String asTString = 'asT<$par1>($par2)';
-    if (jsonToDartConfig.nullsafety && par1 != null && !par1.contains('?')) {
+    if (jsonToDartConfig.nullsafety && par1 != null && !nullable) {
       asTString += '!';
     }
     return asTString;

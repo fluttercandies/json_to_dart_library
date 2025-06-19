@@ -157,9 +157,12 @@ mixin JsonToDartControllerMixin {
                   ? DartHelper.asTMethodNullSafety
                   : DartHelper.asTMethod);
         }
-
+        String dartObjectString = dartObject.toString();
+        if (dartObjectString.isEmpty) {
+          return '';
+        }
         // Append Dart class definitions
-        sb.writeLine(dartObject.toString());
+        sb.writeLine(dartObjectString);
 
         // Format code using Dart formatter
         String result = sb.toString();
