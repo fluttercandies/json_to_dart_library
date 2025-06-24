@@ -431,7 +431,7 @@ class DartObject extends DartProperty {
             copyProperty = item.name;
           }
           copyWithBodySb
-              .writeLine('${item.name}: ${item.name}?? $copyProperty,');
+              .writeLine('${item.name}: ${item.name}?? this.$copyProperty,');
           copyWithParameterSb.writeLine(
               '$typeString${typeString.contains('?') ? '' : '?'}${item.name},');
         }

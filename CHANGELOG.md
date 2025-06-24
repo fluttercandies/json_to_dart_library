@@ -1,3 +1,7 @@
+## 0.0.5
+
+* Fix wrong copyWith method
+
 ## 0.0.4
 
 * 'asT<T?> => T?', don't need to add ? if nullable is true, it should be 'asT<T> => T?'
