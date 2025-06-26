@@ -1,6 +1,6 @@
 ## The library to convert json to dart code
 
-The library for https://github.com/fluttercandies/JsonToDart/Flutter/json_to_dart
+The library for [https://github.com/fluttercandies/JsonToDart/Flutter/json_to_dart](https://github.com/fluttercandies/JsonToDart/tree/master/Flutter/json_to_dart)
 
 ## simple used
 
