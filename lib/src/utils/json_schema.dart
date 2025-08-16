@@ -1,9 +1,14 @@
 import 'package:json_schema/json_schema.dart';
 import 'package:json_to_dart_library/src/utils/camel_under_score_converter.dart';
 
+/// Utility class for working with JSON Schema objects.
+/// Provides methods to check schema validity, generate JSON from schema, and extract comments.
+
 /// A utility class for checking if a JSON map is a valid JSON Schema.
 class JsonSchemaHelper {
   /// Checks if the provided JSON map is a valid JSON Schema.
+  ///
+  /// Returns true if the map contains a `$schema` key with a value containing 'json-schema'.
   static bool isJsonSchema(Map<dynamic, dynamic> json) {
     if (json.containsKey(r'$schema') &&
         json[r'$schema'] is String &&
@@ -11,6 +16,7 @@ class JsonSchemaHelper {
       return true;
     }
 
+    // Uncomment below to check for other schema keys if needed.
     // final schemaKeys = {'type', 'properties', 'items', 'allOf', 'anyOf', 'oneOf', r'$ref'};
     // if (json.keys.any(schemaKeys.contains)) {
     //   return true;
@@ -20,29 +26,103 @@ class JsonSchemaHelper {
   }
 
   /// Creates a JSON object based on the provided JSON Schema.
+  ///
+  /// Delegates to the [createJson] method of the [JsonSchema] instance.
   static dynamic createJsonWithJsonSchema(JsonSchema schema) {
-    if (schema.defaultValue != null) return schema.defaultValue;
+    return schema.createJson();
+  }
+}
 
-    if (schema.enumValues != null && schema.enumValues!.isNotEmpty) {
-      return schema.enumValues!.first;
+/// Extension methods for [JsonSchema] to provide comment extraction and utility getters.
+extension JsonSchemaE on JsonSchema {
+  /// Builds a Dart doc comment string from the schema's description, examples, and default value.
+  /// Each line is prefixed with '///'.
+  String getComment() {
+    List<String> comments = [];
+    if (description != null) {
+      comments.add(description!);
+    }
+    if (examples.isNotEmpty) {
+      comments.add('Examples: ${examples.join(', ')}');
+    }
+    if (defaultValue != null) {
+      comments.add('Default: $defaultValue');
     }
 
-    switch (schema.type?.toString()) {
+    return comments.join('\n').split('\n').map((e) => '/// $e').join('\n');
+  }
+
+  /// Returns true if the schema type is object.
+  bool get isObject => type == SchemaType.object;
+
+  /// Returns true if the schema type is array.
+  bool get isArray => type == SchemaType.array;
+
+  /// Returns true if the schema type is string.
+  bool get isString => type == SchemaType.string;
+
+  /// Returns true if the schema type is boolean.
+  bool get isBoolean => type == SchemaType.boolean;
+
+  /// Returns true if the schema type is integer.
+  bool get isInteger => type == SchemaType.integer;
+
+  /// Returns true if the schema type is number.
+  bool get isNumber => type == SchemaType.number;
+
+  /// Returns true if the schema type is null.
+  bool get isNullValue => type == SchemaType.nullValue;
+
+  // Helper for type matching (commented out).
+  // static bool _typeMatch(
+  //     SchemaType? type, JsonSchema schema, dynamic instance) {
+  //   if (type == SchemaType.object) {
+  //     return instance is Map;
+  //   } else if (type == SchemaType.string) {
+  //     return instance is String;
+  //   } else if (type == SchemaType.integer) {
+  //     return instance is int ||
+  //         (schema.schemaVersion >= SchemaVersion.draft6 &&
+  //             instance is num &&
+  //             instance.remainder(1) == 0);
+  //   } else if (type == SchemaType.number) {
+  //     return instance is num;
+  //   } else if (type == SchemaType.array) {
+  //     return instance is List;
+  //   } else if (type == SchemaType.boolean) {
+  //     return instance is bool;
+  //   } else if (type == SchemaType.nullValue) {
+  //     return instance == null;
+  //   }
+  //   return false;
+  // }
+
+  /// Creates a JSON object based on the provided JSON Schema.
+  ///
+  /// Uses default value, enum, or type to generate a sample JSON value.
+  dynamic createJson() {
+    if (defaultValue != null) return defaultValue;
+
+    if (enumValues != null && enumValues!.isNotEmpty) {
+      return enumValues!.first;
+    }
+
+    switch (type?.toString()) {
       case 'object':
         final result = <String, dynamic>{};
-        schema.properties.forEach((key, propSchema) {
-          result[key] = createJsonWithJsonSchema(propSchema);
+        properties.forEach((key, propSchema) {
+          result[key] = propSchema.createJson();
         });
         return result;
 
       case 'array':
-        if (schema.items != null) {
-          return [createJsonWithJsonSchema(schema.items!)];
+        if (items != null) {
+          return [items!.createJson()];
         }
         return [];
 
       case 'string':
-        if (schema.format == 'date-time') {
+        if (format == 'date-time') {
           return DateTime.now().toIso8601String();
         }
         return '';
@@ -56,63 +136,44 @@ class JsonSchemaHelper {
         return false;
 
       default:
-        if (schema.anyOf.isNotEmpty) {
-          return createJsonWithJsonSchema(schema.anyOf.first);
+        if (anyOf.isNotEmpty) {
+          return anyOf.first.createJson();
         }
-        if (schema.oneOf.isNotEmpty) {
-          return createJsonWithJsonSchema(schema.oneOf.first);
+        if (oneOf.isNotEmpty) {
+          return oneOf.first.createJson();
         }
-        if (schema.allOf.isNotEmpty) {
-          return createJsonWithJsonSchema(schema.allOf.first);
+        if (allOf.isNotEmpty) {
+          return allOf.first.createJson();
         }
         return null;
     }
   }
 
-  /// Get description from a JSON Schema.
-  void getCommentsFromJsonSchema(
-    JsonSchema schema,
-    Map<String, dynamic> propertyComments,
-    Map<String, dynamic> classComments,
-  ) {
-    String getComment(JsonSchema jsonSchema) {
-      List<String> comments = [];
-      if (jsonSchema.description != null) {
-        comments.add(jsonSchema.description!);
-      }
-      if (jsonSchema.examples.isNotEmpty) {
-        comments.add('Examples: ${jsonSchema.examples.join(', ')}');
-      }
-      if (jsonSchema.defaultValue != null) {
-        comments.add('Default: ${jsonSchema.defaultValue}');
-      }
+  /// Recursively yields this schema and all nested property/item schemas as a stream.
+  Stream<JsonSchema> toStream() async* {
+    yield this;
 
-      return comments.join('\n');
+    for (final prop in properties.values) {
+      yield* prop.toStream();
     }
 
-    if (schema.type?.toString() == 'object') {
-      final String? className = schema.propertyName;
-      if (className != null) {
-        classComments[upcaseCamelName(className)] = getComment(schema);
-      }
-      schema.properties.forEach(
-        (key, value) {
-          propertyComments[key] = getComment(value);
-          if (value.type?.toString() == 'object') {
-            getCommentsFromJsonSchema(
-              value,
-              propertyComments,
-              classComments,
-            );
-          } else if (value.type?.toString() == 'array' && value.items != null) {
-            getCommentsFromJsonSchema(
-              value.items!,
-              propertyComments,
-              classComments,
-            );
-          }
-        },
-      );
+    if (items != null) {
+      yield* items!.toStream();
+    }
+  }
+
+  /// Recursively yields only object-type schemas as a stream.
+  Stream<JsonSchema> toObjectStream() async* {
+    if (isObject) {
+      yield this;
+    }
+
+    for (final prop in properties.values) {
+      yield* prop.toObjectStream();
+    }
+
+    if (items != null) {
+      yield* items!.toObjectStream();
     }
   }
 }
