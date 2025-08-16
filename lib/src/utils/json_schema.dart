@@ -177,3 +177,28 @@ extension JsonSchemaE on JsonSchema {
     }
   }
 }
+
+/// Extension methods for [SchemaType] to provide Dart type conversion.
+extension SchemaTypeE on SchemaType {
+  /// Returns the Dart type as a string based on the schema type.
+  String get dartType {
+    switch (this) {
+      case SchemaType.object:
+        return 'Map<String, dynamic>';
+      case SchemaType.array:
+        return 'List<dynamic>';
+      case SchemaType.string:
+        return 'String';
+      case SchemaType.boolean:
+        return 'bool';
+      case SchemaType.integer:
+        return 'int';
+      case SchemaType.number:
+        return 'double';
+      case SchemaType.nullValue:
+        return 'null';
+      default:
+        return 'dynamic'; // Fallback for unsupported types
+    }
+  }
+}
