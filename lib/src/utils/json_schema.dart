@@ -149,31 +149,31 @@ extension JsonSchemaE on JsonSchema {
     }
   }
 
-  /// Recursively yields this schema and all nested property/item schemas as a stream.
-  Stream<JsonSchema> toStream() async* {
+  /// Recursively yields this schema and all nested property/item schemas.
+  Iterable<JsonSchema> getAllJsonSchema() sync* {
     yield this;
 
     for (final prop in properties.values) {
-      yield* prop.toStream();
+      yield* prop.getAllJsonSchema();
     }
 
     if (items != null) {
-      yield* items!.toStream();
+      yield* items!.getAllJsonSchema();
     }
   }
 
-  /// Recursively yields only object-type schemas as a stream.
-  Stream<JsonSchema> toObjectStream() async* {
+  /// Recursively yields only object-type schemas.
+  Iterable<JsonSchema> getAllObjects() sync* {
     if (isObject) {
       yield this;
     }
 
     for (final prop in properties.values) {
-      yield* prop.toObjectStream();
+      yield* prop.getAllObjects();
     }
 
     if (items != null) {
-      yield* items!.toObjectStream();
+      yield* items!.getAllObjects();
     }
   }
 }
