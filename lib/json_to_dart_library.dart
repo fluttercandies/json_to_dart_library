@@ -12,3 +12,4 @@ export 'src/utils/enums.dart';
 export 'src/utils/extension.dart';
 export 'src/utils/string_buffer.dart';
 export 'src/utils/string_helper.dart';
+export 'src/utils/json_schema.dart';

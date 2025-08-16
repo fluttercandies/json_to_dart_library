@@ -1,3 +1,7 @@
+## 0.0.6
+
+* Fix camelName method and support json schema
+
 ## 0.0.5
 
 * Fix wrong copyWith method

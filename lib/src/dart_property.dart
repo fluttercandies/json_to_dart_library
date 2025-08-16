@@ -69,7 +69,7 @@ class DartProperty extends Equatable {
     }
 
     this.name = correctName(name, dartProperty: this);
-    checkError(name);
+    checkError(this.name);
   }
 
   void updatePropertyAccessorType() {

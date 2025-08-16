@@ -4,10 +4,12 @@ import 'package:dart_style/dart_style.dart';
 
 import 'package:get_it/get_it.dart';
 import 'package:intl/intl.dart';
+import 'package:json_schema/json_schema.dart';
 import 'package:json_to_dart_library/src/dart_object.dart';
 import 'package:json_to_dart_library/src/dart_property.dart';
 import 'package:json_to_dart_library/src/utils/dart_helper.dart';
 import 'package:json_to_dart_library/src/utils/extension.dart';
+import 'package:json_to_dart_library/src/utils/json_schema.dart';
 import 'package:json_to_dart_library/src/utils/string_buffer.dart';
 
 import 'config.dart';
@@ -37,11 +39,17 @@ mixin JsonToDartControllerMixin {
     String inputText = json;
     try {
       // Decode JSON in a separate isolate using compute
-      final dynamic jsonData =
-          await compute<String, dynamic>(jsonDecode, inputText)
-              .onError((Object? error, StackTrace stackTrace) {
+      dynamic jsonData = await compute<String, dynamic>(jsonDecode, inputText)
+          .onError((Object? error, StackTrace stackTrace) {
         handleError(error, stackTrace);
       });
+
+      // If the JSON data is a Map and contains a valid JSON Schema, convert it
+      if (jsonData is Map && JsonSchemaHelper.isJsonSchema(jsonData)) {
+        jsonData = JsonSchemaHelper.createJsonWithJsonSchema(
+          JsonSchema.create(jsonData),
+        );
+      }
 
       // Convert the dynamic JSON into DartObject
       final DartObject? extendedObject =

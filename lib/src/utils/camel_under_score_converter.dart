@@ -41,12 +41,14 @@ String camelName(String name, {bool firstCharLowerCase = true}) {
     name = name.replaceAll(symbol, '_');
   }
 
-  final List<String> camels = name.split('_');
+  final List<String> camels =
+      name.split('_').map((e) => e.trim()).where((e) => e.isNotEmpty).toList();
   if (camels.length == 1) {
+    var camel = camels[0];
     if (firstCharLowerCase) {
-      return name.substring(0, 1).toLowerCase() + name.substring(1);
+      return camel.substring(0, 1).toLowerCase() + camel.substring(1);
     } else {
-      return name.substring(0, 1).toUpperCase() + name.substring(1);
+      return camel.substring(0, 1).toUpperCase() + camel.substring(1);
     }
   } else {
     for (final String camel in camels) {
