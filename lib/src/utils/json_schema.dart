@@ -1,4 +1,5 @@
 import 'package:json_schema/json_schema.dart';
+import 'package:json_to_dart_library/src/utils/camel_under_score_converter.dart';
 
 /// A utility class for checking if a JSON map is a valid JSON Schema.
 class JsonSchemaHelper {
@@ -65,6 +66,53 @@ class JsonSchemaHelper {
           return createJsonWithJsonSchema(schema.allOf.first);
         }
         return null;
+    }
+  }
+
+  /// Get description from a JSON Schema.
+  void getCommentsFromJsonSchema(
+    JsonSchema schema,
+    Map<String, dynamic> propertyComments,
+    Map<String, dynamic> classComments,
+  ) {
+    String getComment(JsonSchema jsonSchema) {
+      List<String> comments = [];
+      if (jsonSchema.description != null) {
+        comments.add(jsonSchema.description!);
+      }
+      if (jsonSchema.examples.isNotEmpty) {
+        comments.add('Examples: ${jsonSchema.examples.join(', ')}');
+      }
+      if (jsonSchema.defaultValue != null) {
+        comments.add('Default: ${jsonSchema.defaultValue}');
+      }
+
+      return comments.join('\n');
+    }
+
+    if (schema.type?.toString() == 'object') {
+      final String? className = schema.propertyName;
+      if (className != null) {
+        classComments[upcaseCamelName(className)] = getComment(schema);
+      }
+      schema.properties.forEach(
+        (key, value) {
+          propertyComments[key] = getComment(value);
+          if (value.type?.toString() == 'object') {
+            getCommentsFromJsonSchema(
+              value,
+              propertyComments,
+              classComments,
+            );
+          } else if (value.type?.toString() == 'array' && value.items != null) {
+            getCommentsFromJsonSchema(
+              value.items!,
+              propertyComments,
+              classComments,
+            );
+          }
+        },
+      );
     }
   }
 }
