@@ -37,10 +37,10 @@ class JsonSchemaHelper {
 extension JsonSchemaE on JsonSchema {
   /// Builds a Dart doc comment string from the schema's description, examples, and default value.
   /// Each line is prefixed with '///'.
-  String getComment() {
+  String getComment({String name = ''}) {
     List<String> comments = [];
     if (description != null && description!.trim().isNotEmpty) {
-      comments.add(description!);
+      comments.add('$name$description');
     }
     var examples = this
         .examples
@@ -49,10 +49,11 @@ extension JsonSchemaE on JsonSchema {
         .where((e) => e.isNotEmpty)
         .toList();
     if (examples.isNotEmpty) {
-      comments.add('Examples: ${examples.join(', ')}');
+      comments.add(
+          '${comments.isEmpty ? name : ''}Examples: ${examples.join(', ')}');
     }
     if (defaultValue != null && defaultValue.toString().trim().isNotEmpty) {
-      comments.add('Default: $defaultValue');
+      comments.add('${comments.isEmpty ? name : ''}Default: $defaultValue');
     }
     if (comments.isEmpty) {
       return '';
