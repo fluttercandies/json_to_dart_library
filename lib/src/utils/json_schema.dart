@@ -39,14 +39,23 @@ extension JsonSchemaE on JsonSchema {
   /// Each line is prefixed with '///'.
   String getComment() {
     List<String> comments = [];
-    if (description != null) {
+    if (description != null && description!.isNotEmpty) {
       comments.add(description!);
     }
+    var examples = this
+        .examples
+        .where((e) => e != null)
+        .map((e) => e.toString())
+        .where((e) => e.isNotEmpty)
+        .toList();
     if (examples.isNotEmpty) {
       comments.add('Examples: ${examples.join(', ')}');
     }
-    if (defaultValue != null) {
+    if (defaultValue != null && defaultValue.toString().isNotEmpty) {
       comments.add('Default: $defaultValue');
+    }
+    if (comments.isEmpty) {
+      return '';
     }
 
     return comments.join('\n').split('\n').map((e) => '/// $e').join('\n');
