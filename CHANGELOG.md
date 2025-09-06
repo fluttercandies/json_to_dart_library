@@ -1,3 +1,7 @@
+## 0.0.7
+
+* Add more support for JsonSchema
+
 ## 0.0.6
 
 * Fix camelName method and support json schema

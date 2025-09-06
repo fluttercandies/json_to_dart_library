@@ -35,33 +35,6 @@ class JsonSchemaHelper {
 
 /// Extension methods for [JsonSchema] to provide comment extraction and utility getters.
 extension JsonSchemaE on JsonSchema {
-  /// Builds a Dart doc comment string from the schema's description, examples, and default value.
-  /// Each line is prefixed with '///'.
-  String getComment({String name = ''}) {
-    List<String> comments = [];
-    if (description != null && description!.trim().isNotEmpty) {
-      comments.add('$name$description');
-    }
-    var examples = this
-        .examples
-        .where((e) => e != null)
-        .map((e) => e.toString().trim())
-        .where((e) => e.isNotEmpty)
-        .toList();
-    if (examples.isNotEmpty) {
-      comments.add(
-          '${comments.isEmpty ? name : ''}Examples: ${examples.join(', ')}');
-    }
-    if (defaultValue != null && defaultValue.toString().trim().isNotEmpty) {
-      comments.add('${comments.isEmpty ? name : ''}Default: $defaultValue');
-    }
-    if (comments.isEmpty) {
-      return '';
-    }
-
-    return comments.join('\n').split('\n').map((e) => '/// $e').join('\n');
-  }
-
   /// Returns true if the schema type is object.
   bool get isObject => type == SchemaType.object;
 
